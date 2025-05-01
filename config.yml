@@ -1,0 +1,54 @@
+# config.yml  — Anime Pain Insight Scraper  (ver.0.1)
+
+accounts:
+  # VR酔い／XR
+  - vr_betani
+  - kobi_32768_vrc
+  # コラボカフェ
+  - parkuru
+  - ron_0516xxx
+  # フィギュア黄変
+  - MAXTFEX
+  - figure_kaeru
+  # ライブ抽選
+  - Mizoreccho
+  - shibamo_nico
+  # ガチャ渋い
+  - A90297
+  - crow_likekirara
+  # 配信遅延／地域ロック
+  - potatoslav
+  - kowakunotsubo
+  # ランダム／置き場
+  - neko_yama
+  - tadanantonaku
+  # 画質・音質系
+  - vb1yqnyAWlMMcZG
+  - tezupyon
+  - nozomi_04_twist
+
+keywords:
+  # ① VR酔い
+  - "(VR酔い OR VR酔った OR VR気持ち悪い)"
+  # ② コラボカフェ予約難民
+  - "(コラボカフェ 予約 全滅 OR コラボカフェ 取れない OR 整理券 売り切れ)"
+  # ③ フィギュア黄変・劣化
+  - "(フィギュア 黄変 OR PVC 黄ばみ OR 塗装 剥げた)"
+  # ④ 抽選落選
+  - "(抽選 全落ち OR チケット 落選祭り OR 先行 全滅)"
+  # ⑤ ブラインド被り
+  - "(ブラインド 被り OR ランダム ダブり OR 推し 来ない)"
+  # ⑥ 海外配信ロック
+  - "(VPN アニメ OR 配信 来ない OR 地域制限 キツい)"
+  # ⑦ ネタバレ回避
+  - "(サムネ ネタバレ OR タイムライン ネタバレ OR 通知 ネタバレ)"
+  # ⑧ 画質・音質不満
+  - "(音ズレ ひどい OR 4K アップスケール 不自然 OR 画質 粗い)"
+  # ⑨ 保管スペース問題
+  - "(グッズ 置き場ない OR 同人誌 カビ臭 OR ぬい 増えすぎ)"
+
+min_likes: 5
+min_retweets: 2
+
+max_results_per_query: 400   # 1 日あたり ≒100 ヒット想定
+language: "ja"
