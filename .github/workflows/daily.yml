@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+ # ❶ 追加：システム証明書を最新化
+      - name: Update root CAs
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ca-certificates
+          sudo update-ca-certificates
+          
+
       - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: 'projects/767225273684/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
