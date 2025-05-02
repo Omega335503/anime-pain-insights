@@ -20,9 +20,9 @@ def keep(line):
         ping.append(f'❤️{t["likeCount"]} {t["url"]}')
 
 for a in cfg["accounts"]:
-    for l in run(f"snscrape --jsonl --since {since} twitter-user {a}"): keep(l)
+    for l in run(f"snscrape --jsonl **--root-url https://nitter.net** --since {since} twitter-user {a}"): keep(l)
 for q in cfg["keywords"]:
-    for l in run(f"snscrape --jsonl --since {since} twitter-search \"{q}\" --max-results {cfg['max_results_per_query']}"): keep(l)
+    for l in run(f"snscrape --jsonl **--root-url https://nitter.net** --since {since} twitter-search "{q}"  --max-results {cfg['max_results_per_query']}"): keep(l)
 
 if rows:
     creds,_ = google.auth.default(scopes=[
