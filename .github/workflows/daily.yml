@@ -2,35 +2,38 @@ name: daily-scrape
 on:
   schedule:
     - cron: '0 3 * * *'        # 毎日 JST12:00
-  workflow_dispatch:           # 手動ボタン
+  workflow_dispatch:
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write          # OIDC 認証
+      id-token: write
       contents: read
     steps:
       - uses: actions/checkout@v4
 
- # ❶ 追加：システム証明書を最新化
+      # ❶ 追加：システム証明書を最新化
       - name: Update root CAs
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends ca-certificates
           sudo update-ca-certificates
-          
 
+      # ❷ GCP 鍵レス認証
       - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: 'projects/767225273684/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
-          service_account: 'scraper-bot@verdant-bulwark-458512-j1.iam.gserviceaccount.com'   # ←ここは自分の SA ID に置換
+          service_account: 'scraper-bot@verdant-bulwark-458512-j1.iam.gserviceaccount.com'  # 自分の SA メール
 
+      # ❸ Python & ライブラリ
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - run: pip install snscrape gspread google-auth PyYAML requests certifi
+
+      # ❹ スクレイパー実行
       - run: python scrape.py
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
