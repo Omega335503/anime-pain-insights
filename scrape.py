@@ -2,8 +2,8 @@ import yaml, json, subprocess, datetime, os, ssl, requests, certifi
 import gspread, google.auth
 
 # ── SSL 回避設定 ───────────────────────────
-os.environ["SSL_CERT_FILE"] = certifi.where()                 # certifi ルートを利用
-ssl._create_default_https_context = ssl._create_unverified_context  # 最終手段：検証オフ
+os.environ["SSL_CERT_FILE"] = certifi.where()                 # certifi ルート
+ssl._create_default_https_context = ssl._create_unverified_context  # 検証オフ
 # ────────────────────────────────────────
 
 cfg   = yaml.safe_load(open("config.yml", encoding="utf-8"))
@@ -26,7 +26,7 @@ def keep(line: str):
         ping.append(f'❤️{t["likeCount"]} {t["url"]}')
 
 # ---------- snscrape 呼び出し（Nitter ミラー経由） ----------
-ROOT = "https://nitter.net"        # ← 必ず https:// から書く
+ROOT = "https://nitter.net"
 
 for a in cfg["accounts"]:
     cmd = f"snscrape --jsonl --root-url {ROOT} --since {since} twitter-user {a}"
