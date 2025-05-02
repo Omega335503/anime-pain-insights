@@ -1,34 +1,59 @@
-import yaml, json, subprocess, datetime, os, requests
-import certifi, os
-os.environ["SSL_CERT_FILE"] = certifi.where()
+import yaml, json, subprocess, datetime, os, ssl, requests, certifi
 import gspread, google.auth
-import os, ssl, certifi
-os.environ["SSL_CERT_FILE"] = certifi.where()
-ssl._create_default_https_context = ssl._create_unverified_context   # ←追加
 
+# ── SSL 回避設定 ───────────────────────────
+os.environ["SSL_CERT_FILE"] = certifi.where()                 # certifi ルートを利用
+ssl._create_default_https_context = ssl._create_unverified_context  # 最終手段：検証オフ
+# ────────────────────────────────────────
 
-cfg = yaml.safe_load(open("config.yml", encoding="utf-8"))
+cfg   = yaml.safe_load(open("config.yml", encoding="utf-8"))
 since = (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
-
 rows, ping = [], []
-def run(cmd): return subprocess.check_output(cmd, shell=True, text=True).splitlines()
-def keep(line):
+
+def run(cmd: str):
+    return subprocess.check_output(cmd, shell=True, text=True).splitlines()
+
+def keep(line: str):
     t = json.loads(line)
-    if t["likeCount"]>=cfg["min_likes"] and t["retweetCount"]>=cfg["min_retweets"]:
-        rows.append([t["date"][:10], t["user"]["username"], t["content"][:150],
-                     t["likeCount"], t["url"]])
+    if t["likeCount"] >= cfg["min_likes"] and t["retweetCount"] >= cfg["min_retweets"]:
+        rows.append([
+            t["date"][:10],
+            t["user"]["username"],
+            t["content"][:150],
+            t["likeCount"],
+            t["url"],
+        ])
         ping.append(f'❤️{t["likeCount"]} {t["url"]}')
 
+# ---------- snscrape 呼び出し（Nitter ミラー経由） ----------
+ROOT = "https://nitter.net"
+
 for a in cfg["accounts"]:
-    for l in run(f"snscrape --jsonl **--root-url https://nitter.net** --since {since} twitter-user {a}"): keep(l)
+    cmd = f"snscrape --jsonl --root-url {ROOT} --since {since} twitter-user {a}"
+    for l in run(cmd):
+        keep(l)
+
 for q in cfg["keywords"]:
-    for l in run(f"snscrape --jsonl **--root-url https://nitter.net** --since {since} twitter-search "{q}"  --max-results {cfg['max_results_per_query']}"): keep(l)
+    cmd = (
+        f'snscrape --jsonl --root-url {ROOT} --since {since} '
+        f'twitter-search "{q}" --max-results {cfg["max_results_per_query"]}'
+    )
+    for l in run(cmd):
+        keep(l)
+# ------------------------------------------------------------
 
+# Sheets へ書き込み
 if rows:
-    creds,_ = google.auth.default(scopes=[
-      "https://www.googleapis.com/auth/spreadsheets",
-      "https://www.googleapis.com/auth/drive"])
-    gspread.authorize(creds).open("AnimePainDB").sheet1.append_rows(rows, value_input_option="RAW")
+    creds, _ = google.auth.default(
+        scopes=[
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive",
+        ]
+    )
+    gspread.authorize(creds).open("AnimePainDB").sheet1.append_rows(
+        rows, value_input_option="RAW"
+    )
 
+# Slack 通知
 if ping and os.getenv("SLACK_WEBHOOK"):
-    requests.post(os.environ["SLACK_WEBHOOK"], json={"text":"\n".join(ping)}, timeout=10)
+    requests.post(os.environ["SLACK_WEBHOOK"], json={"text": "\n".join(ping)}, timeout=10)
