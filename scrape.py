@@ -26,7 +26,7 @@ def keep(line: str):
         ping.append(f'❤️{t["likeCount"]} {t["url"]}')
 
 # ---------- snscrape 呼び出し（Nitter ミラー経由） ----------
-ROOT = "https://nitter.net"
+ROOT = "https://nitter.net"        # ← 必ず https:// から書く
 
 for a in cfg["accounts"]:
     cmd = f"snscrape --jsonl --root-url {ROOT} --since {since} twitter-user {a}"
