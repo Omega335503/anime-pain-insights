@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install snscrape gspread google-auth PyYAML requests
+      - run: pip install snscrape gspread google-auth PyYAML requests certifi
       - run: python scrape.py
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
