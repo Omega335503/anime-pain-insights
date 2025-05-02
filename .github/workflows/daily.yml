@@ -12,7 +12,14 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-
+      #ここに追加
+      - name: show which scrape.py is used
+        run: |
+          echo "PWD=$(pwd)"
+          echo "---- grep result ----"
+          git ls-files | grep scrape.py | xargs -I{} grep -n --color --line-number "root-url" {} || true
+          echo "---------------------"
+      
       # ❶ 追加：システム証明書を最新化
       - name: Update root CAs
         run: |
