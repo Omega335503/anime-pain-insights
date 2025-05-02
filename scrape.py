@@ -1,4 +1,6 @@
 import yaml, json, subprocess, datetime, os, requests
+import certifi, os
+os.environ["SSL_CERT_FILE"] = certifi.where()
 import gspread, google.auth
 
 cfg = yaml.safe_load(open("config.yml", encoding="utf-8"))
