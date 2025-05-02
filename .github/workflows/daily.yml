@@ -15,7 +15,7 @@ jobs:
 
       - uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: 'projects/ここを数字に/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          workload_identity_provider: 'projects/767225273684/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
           service_account: 'scraper-bot@anime-insight-scraper.iam.gserviceaccount.com'   # ←ここは自分の SA ID に置換
 
       - uses: actions/setup-python@v5
