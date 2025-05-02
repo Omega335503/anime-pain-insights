@@ -2,6 +2,10 @@ import yaml, json, subprocess, datetime, os, requests
 import certifi, os
 os.environ["SSL_CERT_FILE"] = certifi.where()
 import gspread, google.auth
+import os, ssl, certifi
+os.environ["SSL_CERT_FILE"] = certifi.where()
+ssl._create_default_https_context = ssl._create_unverified_context   # ←追加
+
 
 cfg = yaml.safe_load(open("config.yml", encoding="utf-8"))
 since = (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
